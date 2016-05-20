@@ -1,0 +1,21 @@
+{
+  "name": "go-fc00",
+  "author": "lars",
+  "version": "0.0.0",
+  "language": "go",
+  "issues_url": "https://github.com/fc00/go-fc00/issues",
+  "gx_version": "0.4.0",
+  "gx": {},
+  "gxDependencies": [
+    {
+      "hash": "QmYzDkkgAEmrcNzFCiYo6L1dTX4EAG1gZkbtdbd9trL4vd",
+      "name": "go-multiaddr",
+      "version": "0.0.0"
+    },
+    {
+      "hash": "QmUBa4w6CbHJUMeGJPDiMEDWsM93xToK1fTnFXnrC8Hksw",
+      "name": "go-multiaddr-net",
+      "version": "1.0.1"
+    }
+  ]
+}
