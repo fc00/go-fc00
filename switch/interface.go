@@ -22,19 +22,16 @@ type SwitchController interface {
 	Connect(rmaddr ma.Multiaddr) error
 
 	// Adds an existing connection.
-	// Doesn't wrap in cryptoauth.Session, doesn't
-	// This is used to add "local" connections to the switch,
-	// which aren't backed by a network connection, but by local code.
+	// Doesn't wrap in cryptoauth.Session, but sends switch-ping
+	// This is used to add a "local" connection,
+	// which isn't backed by a network connection, but by local code.
 	AddLocalConn(conn *Conn) error
 
 	// Kills the cryptoauth session,
 	// and removes the connection from the Switch.
 	Disconnect(rmaddr ma.Multiaddr) error
 
-	// Returns
 	Conns() ([]*Conn, error)
-
-	AddDiscovery() error
 }
 
 type Switch interface {
@@ -68,6 +65,8 @@ type SwitchPacket interface {
 	ControlPacket() ControlPacket
 }
 
+// If a received packet is for LocalConn, it isn't a CryptoPacket!
+
 //                     1               2               3
 //     0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -80,7 +79,7 @@ type SwitchPacket interface {
 // 12 |                            Version                            |
 //    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 // 16 |                                                               |
-//    +                      Control Packet Payload                   +
+//    +                        Control Payload                        +
 //    |
 //
 type ControlPacket interface {
@@ -89,5 +88,20 @@ type ControlPacket interface {
 	Type() uint16
 	Magic() uint32
 	Version() uint32
-	Data() []byte
+	Payload() []byte
+}
+
+//                    1               2               3
+//    0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 0 |  ver  | unusd |     unused    |         Content Type          |
+//   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 1 |                                                               |
+//   +                         Data Payload                          +
+//   |
+//
+type DataPacket interface {
+	Version() uint16
+	ContentType() uint16
+	Payload() []byte
 }
